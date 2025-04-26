@@ -17,6 +17,8 @@ class crudRepository {
       throw error;
     }
   }
+
+  
   async destroy(data) {
     try {
       const response = await this.model.destroy({
@@ -58,10 +60,6 @@ class crudRepository {
   }
 
 
-
-
-
-  
   async update(id, data) {
     try {
       const [updatedCount] = await this.model.update(data, {
