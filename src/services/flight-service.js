@@ -1,6 +1,7 @@
-const {} = require("http-status-codes");
+const { StatusCodes } = require("http-status-codes");
 const { FlightRepository } = require("../repositories");
 const AppError = require("../utils/errors/app-errors");
+const { Error } = require("sequelize");
 
 const flightRepository = new FlightRepository();
 
@@ -12,7 +13,7 @@ async function createFlight(data) {
     if (error.name === "SequelizeValidationError") {
       let explanation = [],
         errors = error.errors;
-        errors.forEach((err) => {
+      errors.forEach((err) => {
         explanation.push(err.message);
       });
       // Consider using a logging library here
@@ -28,6 +29,6 @@ async function createFlight(data) {
   }
 }
 
-module.exports = { 
-        createFlight 
+module.exports = {
+  createFlight,
 };
