@@ -66,6 +66,20 @@ function validateCreateRequest(req, res, next) {
   }
   
 //## Check arrivalTime > departureTime
+
+ // 🛫 Departure Time:
+// When the flight leaves the source airport.
+
+// It is the starting time of the flight.
+
+// ✅ Example:
+// Flight leaves from Mumbai at 10:00 AM → that is departure time.
+
+// 🛬 Arrival Time:
+// When the flight reaches the destination airport.
+
+// It is the ending time of the flight.
+
   const departureTime = new Date(req.body.departureTime);
   const arrivalTime = new Date(req.body.arrivalTime);
 

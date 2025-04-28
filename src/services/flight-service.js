@@ -32,6 +32,7 @@ async function createFlight(data) {
 
 async function getAllFlights(query) {
   let customFilter = {};
+  let sortFilter = [];
   //trips : MUM-DEL
   if (query.trips) {
     let [departureAirportId, arrivalAirportId] = query.trips.split("-");
@@ -45,14 +46,40 @@ async function getAllFlights(query) {
     }
   }
 
-  if(query.price){
-    [minPrice , maxPrice] = query.price.split("-");
+  if (query.price) {
+    [minPrice, maxPrice] = query.price.split("-");
     customFilter.price = {
-     [Op.between] : [minPrice , (maxPrice === undefined ? Number.MAX_SAFE_INTEGER : maxPrice)]
-    }
+      [Op.between]: [
+        minPrice,
+        maxPrice === undefined ? Number.MAX_SAFE_INTEGER : maxPrice,
+      ],
+    };
   }
+
+  if (query.travellers) {
+    //the number of seats should be greater than or equal to the number of travellers
+    customFilter.totalSeats = {
+      [Op.gte]: query.travellers,
+    };
+  }
+
+  if (query.tripDate) {
+    customFilter.departureTime = {
+      [Op.between]: [query.tripDate, query.tripDate + " 23:59:59"],
+    };
+  }
+
+  if (query.sort) {
+    let params = query.sort.split(",");
+    const sortParams = params.map((param) => param.split("_"));
+    sortFilter = sortParams;
+  }
+
   try {
-    const flights = await flightRepository.getAllFlights(customFilter);
+    const flights = await flightRepository.getAllFlights(
+      customFilter,
+      sortFilter
+    );
     return flights;
   } catch (error) {
     console.log("Unexpected Error:", error);
@@ -62,9 +89,6 @@ async function getAllFlights(query) {
     );
   }
 }
-
-
-
 
 module.exports = {
   createFlight,

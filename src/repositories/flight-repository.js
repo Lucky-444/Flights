@@ -8,9 +8,9 @@ class FlightRepository extends crudRepository {
   constructor() {
     super(Flight);
   }
-  async getAllFlights(filter) {
+  async getAllFlights(filter, sort) {
     try {
-      const flights = await this.model.findAll({ where: filter });
+      const flights = await this.model.findAll({ where: filter, order: sort });
       return flights;
     } catch (error) {
       console.log("Unexpected Error: ", error);
