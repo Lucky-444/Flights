@@ -12,6 +12,11 @@ router.post(
 );
 
 
+// api/v1/flights?MUM-DEL :: get
+router.get("/", FlightController.getAllFlights);
+
+
+
 
 
 module.exports = router;  
