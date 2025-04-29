@@ -1,8 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
 const { ErrorResponse } = require("../utils/common");
 const AppError = require("../utils/errors/app-errors");
+const { Airplane } = require("../models"); // ✅ Make sure to import this
 
-function validateCreateRequest(req, res, next) {
+async function validateCreateRequest(req, res, next) {
   if (!req.body.flightNumber) {
     ErrorResponse.message = "Something Went Wrong";
     ErrorResponse.error = new AppError(
@@ -56,7 +57,8 @@ function validateCreateRequest(req, res, next) {
     );
     return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
   }
-  if(req.body.price < 0){
+
+  if (req.body.price < 0) {
     ErrorResponse.message = "Something Went Wrong";
     ErrorResponse.error = new AppError(
       ["price should not be negative"],
@@ -64,21 +66,6 @@ function validateCreateRequest(req, res, next) {
     );
     return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
   }
-  
-//## Check arrivalTime > departureTime
-
- // 🛫 Departure Time:
-// When the flight leaves the source airport.
-
-// It is the starting time of the flight.
-
-// ✅ Example:
-// Flight leaves from Mumbai at 10:00 AM → that is departure time.
-
-// 🛬 Arrival Time:
-// When the flight reaches the destination airport.
-
-// It is the ending time of the flight.
 
   const departureTime = new Date(req.body.departureTime);
   const arrivalTime = new Date(req.body.arrivalTime);
@@ -91,7 +78,38 @@ function validateCreateRequest(req, res, next) {
     );
     return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
   }
-  next();
+
+  // ✅ Check airplane capacity
+  try {
+    const airplane = await Airplane.findByPk(req.body.airplaneId);
+    if (!airplane) {
+      ErrorResponse.message = "Something Went Wrong";
+      ErrorResponse.error = new AppError(
+        ["Airplane not found with the provided ID"],
+        StatusCodes.BAD_REQUEST
+      );
+      return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
+
+    if (req.body.totalSeats > airplane.capacity) {
+      ErrorResponse.message = "Something Went Wrong";
+      ErrorResponse.error = new AppError(
+        [`totalSeats (${req.body.totalSeats}) cannot exceed airplane capacity (${airplane.capacity})`],
+        StatusCodes.BAD_REQUEST
+      );
+      return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
+
+    next();
+  } catch (error) {
+    console.log("Validation error:", error);
+    ErrorResponse.message = "Something Went Wrong";
+    ErrorResponse.error = new AppError(
+      ["Internal server error during validation"],
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  }
 }
 
 module.exports = { validateCreateRequest };
