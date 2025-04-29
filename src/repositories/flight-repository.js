@@ -2,7 +2,7 @@ const crudRepository = require("./crud-reository");
 const AppError = require("../utils/errors/app-errors");
 const { StatusCodes } = require("http-status-codes");
 
-const { Flight , Airport } = require("../models");
+const { Flight , Airport , Airplane, City } = require("../models");
 
 class FlightRepository extends crudRepository {
   constructor() {
@@ -17,13 +17,30 @@ class FlightRepository extends crudRepository {
           {
             model: Airport,
             as: "departureAirport",
-            attributes: ["id", "name", "cityID", "address"],
+            attributes: ["id", "name","code", "cityID", "address"],
+            include : [
+              {
+                model : City,
+                attributes : ["id","name"] 
+              }
+            ]
           },
           {
             model: Airport,
             as: "arrivalAirport",
-            attributes: ["id", "name", "cityID", "address"],
+            attributes: ["id", "name","code", "cityID", "address"],
+            include : [
+              {
+                model : City,
+                attributes : ["id","name"]
+              }
+            ]
           },
+          {
+            model: Airplane,
+            attributes: ["id", "modelNumber", "capacity"],
+          },
+          
         ],
       });
       return flights;
