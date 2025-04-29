@@ -11,7 +11,6 @@ async function createCity(data) {
     return city;
   } catch (error) {
     console.log(error);
-
     if (
       error.name === "SequelizeValidationError" ||
       error.name === "SequelizeUniqueConstraintError"
@@ -26,7 +25,6 @@ async function createCity(data) {
       throw new AppError(explanation, StatusCodes.BAD_REQUEST);
     }
     // Catching any other errors
-
     throw new AppError(
       "Can't create a new CITY object",
       StatusCodes.INTERNAL_SERVER_ERROR
