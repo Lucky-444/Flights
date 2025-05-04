@@ -1,6 +1,8 @@
 const crudRepository = require("./crud-reository");
 const AppError = require("../utils/errors/app-errors");
 const { StatusCodes } = require("http-status-codes");
+const { Sequelize }  = require('sequelize');
+const db = require("../models");
 
 const { Flight , Airport , Airplane, City } = require("../models");
 
@@ -55,13 +57,15 @@ class FlightRepository extends crudRepository {
 
 
   async updateRemainingSeats(flightId, seats, dec = true) {
+    await db.sequelize.query(`select * from flights where flights.id = ${flightId} FOR UPDATE ;`);
+
     try {
       const flight = await Flight.findByPk(flightId);
       if (!flight) {
         throw new AppError("Flight not found", StatusCodes.NOT_FOUND);
       }
   
-      if (parseInt(dec)) {
+      if (dec === 'true' || dec === true) {
         await flight.decrement('totalSeats', { by: seats });
       } else {
         await flight.increment('totalSeats', { by: seats }); 
@@ -75,8 +79,6 @@ class FlightRepository extends crudRepository {
       throw new AppError("Can't update a flight", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
-  
-  
 
 }
 
