@@ -52,7 +52,35 @@ class FlightRepository extends crudRepository {
       );
     }
   }
+
+
+  async updateRemainingSeats(flightId, seats, dec = true) {
+    try {
+      const flight = await Flight.findByPk(flightId);
+      if (!flight) {
+        throw new AppError("Flight not found", StatusCodes.NOT_FOUND);
+      }
+  
+      if (parseInt(dec)) {
+        await flight.decrement('totalSeats', { by: seats });
+      } else {
+        await flight.increment('totalSeats', { by: seats }); 
+      }
+  
+      // Reload the flight to get the updated values
+      await flight.reload();
+      return flight; // returns updated flight object
+    } catch (error) {
+      console.error("Something went wrong in updateRemainingSeats:", error);
+      throw new AppError("Can't update a flight", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
+  
+
 }
+
+
 
 
 

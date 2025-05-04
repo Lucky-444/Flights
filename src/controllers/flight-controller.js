@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const { FlightService } = require("../services");
 const { ErrorResponse, SuccessResponse } = require("../utils/common");
 const AppError = require("../utils/errors/app-errors");
+const { UPDATE } = require("sequelize/lib/query-types");
 
 /**
  * Create a new flight
@@ -74,9 +75,33 @@ async function getFlights(req , res){
 
 
 
+/**
+ * @route UPDATE_SEATS :: /flights/:id
+ * @param {*} req 
+ * @param {*} res
+ * 
+ */
+
+async function updateSeats(req, res) {
+  try {
+    const flight = await FlightService. updateFlightSeats({
+      flightId : req.params.id,
+      seats : req.body.seats,
+      dec : req.body.dec
+    });
+    SuccessResponse.data = flight;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statuscode).json(ErrorResponse);
+  }
+  
+}
+
 module.exports = {
   createFlight,
   getAllFlights,
   getFlights,
+  updateSeats,
   
 };

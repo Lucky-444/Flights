@@ -94,7 +94,9 @@ async function validateCreateRequest(req, res, next) {
     if (req.body.totalSeats > airplane.capacity) {
       ErrorResponse.message = "Something Went Wrong";
       ErrorResponse.error = new AppError(
-        [`totalSeats (${req.body.totalSeats}) cannot exceed airplane capacity (${airplane.capacity})`],
+        [
+          `totalSeats (${req.body.totalSeats}) cannot exceed airplane capacity (${airplane.capacity})`,
+        ],
         StatusCodes.BAD_REQUEST
       );
       return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
@@ -112,4 +114,24 @@ async function validateCreateRequest(req, res, next) {
   }
 }
 
-module.exports = { validateCreateRequest };
+function validateUpdateSeatRequest(req, res, next) {
+  if (!req.body.seats) {
+    ErrorResponse.message = "Something Went Wrong";
+    ErrorResponse.error = new AppError(
+      ["seats should not be null"],
+      StatusCodes.BAD_REQUEST
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+  // if (!req.body.flightId) {
+  //   ErrorResponse.message = "Something Went Wrong while Updating FLight";
+  //   ErrorResponse.error = new AppError(
+  //     ["flightId should not be null"],
+  //     StatusCodes.BAD_REQUEST
+  //   );
+  //   return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  // }
+  next();
+}
+
+module.exports = { validateCreateRequest, validateUpdateSeatRequest };
