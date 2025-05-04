@@ -5,6 +5,7 @@ const { Sequelize }  = require('sequelize');
 const db = require("../models");
 
 const { Flight , Airport , Airplane, City } = require("../models");
+const { addRowQueryLocksOnFlights } = require("./queries");
 
 class FlightRepository extends crudRepository {
   constructor() {
@@ -57,7 +58,7 @@ class FlightRepository extends crudRepository {
 
 
   async updateRemainingSeats(flightId, seats, dec = true) {
-    await db.sequelize.query(`select * from flights where flights.id = ${flightId} FOR UPDATE ;`);
+    await db.sequelize.query(addRowQueryLocksOnFlights(flightId));
 
     try {
       const flight = await Flight.findByPk(flightId);
