@@ -12,8 +12,12 @@ router.post(
 );
 
 
-// api/v1/flights?MUM-DEL :: get
+// api/v1/flights?trips=MUM-DEL :: get
 router.get("/", FlightController.getAllFlights);
+
+// api/v1/flights/:id
+router.post("/:id" , FlightController.getFlights);
+
 
 
 
