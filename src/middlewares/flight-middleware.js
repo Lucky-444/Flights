@@ -123,14 +123,7 @@ function validateUpdateSeatRequest(req, res, next) {
     );
     return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
   }
-  // if (!req.body.flightId) {
-  //   ErrorResponse.message = "Something Went Wrong while Updating FLight";
-  //   ErrorResponse.error = new AppError(
-  //     ["flightId should not be null"],
-  //     StatusCodes.BAD_REQUEST
-  //   );
-  //   return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
-  // }
+ 
   next();
 }
 

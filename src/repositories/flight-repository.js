@@ -58,6 +58,8 @@ class FlightRepository extends crudRepository {
 
 
   async updateRemainingSeats(flightId, seats, dec = true) {
+
+    
     await db.sequelize.query(addRowQueryLocksOnFlights(flightId));
 
     try {
