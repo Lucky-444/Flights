@@ -9,6 +9,7 @@ app.use(express.json())//returns a middleware that only parse jsons data
 app.use(express.urlencoded({extended : true})) 
 
 app.use('/api', apiRoutes);
+app.use('/flightsService/api' , apiRoutes);
 
 
 app.listen(ServerConfig.PORT, () => {
